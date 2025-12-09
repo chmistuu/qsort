@@ -1,0 +1,58 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+
+void qswap(int &a, int &b) {
+    int temp = a;
+    a = b;
+    b = temp;
+}
+
+
+double particion(int A[], int l, int p) {
+    int pivotIndex = l + std::rand() % (p - l + 1);
+    qswap(A[pivotIndex], A[p]);
+    int pivot = A[p];
+    int i = l - 1;
+    for (int j = l; j < p; j++) {
+        if (A[j] <= pivot) {
+            i++;
+            qswap(A[i], A[j]);
+        }
+    }
+    qswap(A[i + 1], A[p]);
+    return i + 1;
+}
+
+
+void quicksort_recursion(int A[], int l, int p) {
+    if (l < p) {
+        int q = particion(A, l, p);
+        quicksort_recursion(A, l, q - 1);
+        quicksort_recursion(A, q + 1, p);
+    }
+}
+
+
+void quicksort(int A[], int n) {
+    quicksort_recursion(A, 0, n - 1);
+}
+
+
+int main() {
+    std::srand(static_cast<unsigned int>(std::time(0))); // Seed for random number generation
+    const int size = 10;
+    int arr[size] = {34, 7, 23, 32, 5, 62, 32, 2, 12, 45};
+    std::cout << "Original array: ";
+    for (int i = 0; i < size; i++) {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << std::endl;
+    quicksort(arr, size);
+    std::cout << "Sorted array: ";
+    for (int i = 0; i < size; i++) {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << std::endl;
+    return 0;
+}
