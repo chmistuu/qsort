@@ -1,0 +1,73 @@
+#include <iostream>
+#include <stack>
+#include <utility>
+#include <algorithm>
+
+void qswap(int& a, int& b) {
+    int temp = a;
+    a = b;
+    b = temp;
+}
+
+int Partition(int A[], int l, int p) {
+    int pivot = A[l];
+    int i = l;
+    int j = p;
+
+    while (i < j) {
+        while (i <= p && A[i] <= pivot) ++i;
+        while (j >= l && A[j] > pivot) --j;
+        if (i < j) {
+            qswap(A[i], A[j]);
+        }
+    }
+    qswap(A[l], A[j]);
+    return j;
+}
+
+void StackQSort(int A[], int l, int p) {
+    if (l >= p) return;
+
+    std::stack< std::pair<int, int> > S;
+    S.push(std::make_pair(l, p));
+
+    while (!S.empty()) {
+        std::pair<int, int> node = S.top();
+        S.pop();
+        int lew = node.first;
+        int praw = node.second;
+
+        while (lew < praw) {
+            int m = Partition(A, lew, praw);
+
+            int leftSize = m - lew;
+            int rightSize = praw - m;
+
+            if (leftSize < rightSize) {
+                if (m + 1 <= praw) S.push(std::make_pair(m + 1, praw));
+                praw = m - 1;
+            }
+            else {
+                if (lew <= m - 1) S.push(std::make_pair(lew, m - 1));
+                lew = m + 1;
+            }
+        }
+    }
+}
+
+int main() {
+    int A[] = { 34, 7, 23, 32, 5, 62, 32, 2, 12, 45 };
+    int n = sizeof(A) / sizeof(A[0]);
+
+    std::cout << "Przed sortowaniem: ";
+    for (int i = 0; i < n; ++i) std::cout << A[i] << " ";
+    std::cout << "\n";
+
+    StackQSort(A, 0, n - 1);
+
+    std::cout << "Po sortowaniu:     ";
+    for (int i = 0; i < n; ++i) std::cout << A[i] << " ";
+    std::cout << "\n";
+
+    return 0;
+}
